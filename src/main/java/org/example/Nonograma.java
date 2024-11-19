@@ -49,6 +49,18 @@ public class Nonograma extends LayOutNonograma {
         this.tamano = tamano;
     }
 
+    /*
+     * NOTA
+     * El algoritmo de generación de los nonogramas es parcialmente aleatorio.
+     * Utiliza random para rellenar las casillas, pero las pistas se calculan
+     * a partir de las casillas generadas. Por lo que las pistas son siempre
+     * correctas y no se generan aleatoriamente. Esto garantiza que el nonograma
+     * siempre se pueda resolver.
+     * 
+     * Observese el test NonogramaTest.java donde se verifica que los nonogramas
+     * generados siempre tienen una solución.
+     */
+
     /**
      * Genera un tablero de casillas aleatorias (0 o 1) utilizando la semilla.
      */
