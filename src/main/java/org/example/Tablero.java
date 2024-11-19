@@ -47,7 +47,7 @@ public class Tablero extends LayOutNonograma {
         if (solucion[y][x] == valor)
             casillas[y][x] = valor;
         else
-            throw new NoSuchElementException("Valor incorrecto. Inténtalo de nuevo.");
+            throw new NoSuchElementException("Valor incorrecto.");
     }
 
     /**

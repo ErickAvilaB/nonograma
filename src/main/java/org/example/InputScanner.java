@@ -27,15 +27,4 @@ public class InputScanner {
         return instance;
     }
 
-    /**
-     * Método para cerrar el Scanner.
-     * Debe ser llamado al final del programa para liberar el recurso.
-     */
-    public static void close() {
-        if (instance != null) {
-            instance.close();
-            instance = null; // Asegurarse de que no se pueda reutilizar
-        }
-    }
-
 }

@@ -54,6 +54,7 @@ public class Main {
             if (x == -1 && y == -1 && valor == -1) {
                 if (pistas <= 0) {
                     System.out.println("No tienes pistas disponibles");
+                    System.out.println(tablero.graficar());
                     continue;
                 }
                 pistas--;
@@ -74,7 +75,7 @@ public class Main {
 
     private void mostrarPista(Tablero tablero) {
         int[] pista = tablero.pista();
-        System.out.println("Pista: " + pista[0] + " " + pista[1] + " " + pista[2]);
+        System.out.println("Pista: " + pista[0] + " " + pista[1] + " " + pista[2] + ", -1 pista");
         System.out.println(tablero.graficar());
     }
 
@@ -87,7 +88,7 @@ public class Main {
             System.out.println(e.getMessage());
             return 2;
         } catch (NoSuchElementException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Valor incorrecto. -1 vida");
             return 0;
         }
     }
@@ -144,7 +145,7 @@ public class Main {
         try {
             nivel = scanner.nextInt();
         } catch (Exception e) {
-            throw new RuntimeException("Ingrese un número válido");
+            throw new RuntimeException("No se ha ingresado un número");
         }
 
         if (nivel < 1 || nivel > 5) {
