@@ -4,7 +4,7 @@ Este es un proyecto en Java que implementa un juego de Nonograma, un tipo de rom
 
 # Ejemplo
 
-![Nonograma]()
+![image](https://github.com/user-attachments/assets/621ef685-ba9a-4b24-8a4f-42eb16f7a2ae)
 
 ## Estructura del Proyecto
 
