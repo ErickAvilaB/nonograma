@@ -10,6 +10,11 @@ public class Tablero extends LayOutNonograma {
 
     private final int[][] solucion;
 
+    /**
+     * Dado un nonograma copia sus atributos y genera un tablero vacío donde el
+     * usuario podrá marcar las casillas.
+     *
+     */
     public Tablero(Nonograma nonograma) {
         this.solucion = nonograma.getCasillas();
         this.tamano = nonograma.getTamano();
@@ -22,7 +27,7 @@ public class Tablero extends LayOutNonograma {
     /**
      * Inicializa todas las casillas del tablero con -1 (sin marcar).
      */
-    public void inicializarCasillas() {
+    private void inicializarCasillas() {
         for (int[] fila : casillas)
             java.util.Arrays.fill(fila, -1);
     }

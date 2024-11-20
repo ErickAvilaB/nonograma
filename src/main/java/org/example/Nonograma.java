@@ -15,8 +15,7 @@ public class Nonograma extends LayOutNonograma {
 
     /**
      * Constructor con semilla de tiempo actual.
-     * 
-     * @param tamano
+     *
      */
     public Nonograma(int tamano) {
         this(System.currentTimeMillis(), tamano);
@@ -24,9 +23,7 @@ public class Nonograma extends LayOutNonograma {
 
     /**
      * Constructor con semilla especificada.
-     * 
-     * @param semilla
-     * @param tamano
+     *
      */
     public Nonograma(long semilla, int tamano) {
         this.semilla = semilla;
@@ -93,6 +90,12 @@ public class Nonograma extends LayOutNonograma {
         }
     }
 
+    /**
+     * Calcula las pistas de una línea de casillas. Columna o fila.
+     * 
+     * @param linea Línea de casillas.
+     * @return Lista de pistas.
+     */
     private List<Integer> calcularPistasLinea(int[] linea) {
         List<Integer> pistas = new ArrayList<>();
         int contador = 0;

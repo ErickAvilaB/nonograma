@@ -7,7 +7,6 @@ import java.util.Scanner;
  */
 public class InputScanner {
 
-    // Instancia única del Scanner
     private static Scanner instance;
 
     // Constructor privado para evitar instanciación directa

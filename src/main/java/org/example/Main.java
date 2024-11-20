@@ -138,19 +138,21 @@ public class Main {
         System.out.println("  3. Medio (10x10)");
         System.out.println("  4. Intermedio (10x10) - señala una casilla vacía");
         System.out.println("  5. Difícil (15x15)\n");
-        System.out.print("Ingresa el número del nivel que deseas jugar: ");
 
-        int nivel;
-        try {
-            nivel = scanner.nextInt();
-        } catch (Exception e) {
-            throw new RuntimeException("No se ha ingresado un número");
+        // No puede salir del bucle hasta que se seleccione un nivel válido
+        while (true) {
+            System.out.print("Selecciona un nivel: ");
+            try {
+                int nivel = scanner.nextInt();
+                if (nivel < 1 || nivel > 5) {
+                    System.out.println("Nivel inválido. Inténtalo de nuevo.");
+                    continue;
+                }
+                return nivel;
+            } catch (Exception e) {
+                scanner.nextLine(); // Limpiar el buffer de entrada
+                System.out.println("Nivel inválido. Inténtalo de nuevo.");
+            }
         }
-
-        if (nivel < 1 || nivel > 5) {
-            throw new RuntimeException("Nivel inválido");
-        }
-
-        return nivel;
     }
 }
