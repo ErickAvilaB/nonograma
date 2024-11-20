@@ -125,8 +125,7 @@ public class Main {
 
         // Marcar una casilla vacía para los niveles 1 y 4
         if (nivel == 1 || nivel == 4) {
-            int[] primerVacio = tablero.primerVacio();
-            tablero.marcarCasilla(primerVacio[0], primerVacio[1], 0);
+            tablero.pistaInicio();
         }
 
         return tablero;

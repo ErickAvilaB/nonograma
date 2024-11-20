@@ -13,12 +13,21 @@ public class Nonograma extends LayOutNonograma {
 
     private final long semilla;
 
-    // Constructor que utiliza la semilla del sistema actual
+    /**
+     * Constructor con semilla de tiempo actual.
+     * 
+     * @param tamano
+     */
     public Nonograma(int tamano) {
         this(System.currentTimeMillis(), tamano);
     }
 
-    // Constructor con semilla personalizada
+    /**
+     * Constructor con semilla especificada.
+     * 
+     * @param semilla
+     * @param tamano
+     */
     public Nonograma(long semilla, int tamano) {
         this.semilla = semilla;
         build(tamano);
@@ -38,11 +47,6 @@ public class Nonograma extends LayOutNonograma {
         calcularPistas();
     }
 
-    /**
-     * Valida que el tamaño del nonograma esté en el rango permitido.
-     *
-     * @param tamano Tamaño a validar.
-     */
     private void validarTamano(int tamano) {
         if (tamano < 5 || tamano > 15)
             throw new IllegalArgumentException("El tamaño debe estar entre 5 y 15.");
@@ -71,9 +75,6 @@ public class Nonograma extends LayOutNonograma {
                 casillas[i][j] = random.nextInt(2);
     }
 
-    /**
-     * Calcula las pistas para filas y columnas basándose en las casillas generadas.
-     */
     private void calcularPistas() {
         // Calcular pistas para filas
         casillasToPistas(pistasFilas, true);
@@ -92,12 +93,6 @@ public class Nonograma extends LayOutNonograma {
         }
     }
 
-    /**
-     * Calcula las pistas para una línea (fila o columna).
-     *
-     * @param linea Array que representa una fila o columna.
-     * @return Lista de pistas para la línea.
-     */
     private List<Integer> calcularPistasLinea(int[] linea) {
         List<Integer> pistas = new ArrayList<>();
         int contador = 0;
@@ -116,12 +111,6 @@ public class Nonograma extends LayOutNonograma {
         return pistas;
     }
 
-    /**
-     * Obtiene una columna del tablero.
-     *
-     * @param indiceColumna Índice de la columna a obtener.
-     * @return Array que representa la columna.
-     */
     private int[] getColumna(int indiceColumna) {
         return IntStream.range(0, tamano)
                 .map(i -> casillas[i][indiceColumna])

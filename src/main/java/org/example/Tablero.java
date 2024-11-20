@@ -10,11 +10,6 @@ public class Tablero extends LayOutNonograma {
 
     private final int[][] solucion;
 
-    /**
-     * Constructor que inicializa el tablero a partir de un Nonograma dado.
-     * 
-     * @param nonograma El nonograma con la solución y pistas.
-     */
     public Tablero(Nonograma nonograma) {
         this.solucion = nonograma.getCasillas();
         this.tamano = nonograma.getTamano();
@@ -44,10 +39,70 @@ public class Tablero extends LayOutNonograma {
         validarCoordenadas(x, y);
         if (valor < -1 || valor > 1)
             throw new IllegalArgumentException("Valor invalido. Debe ser 0 o 1.");
-        if (solucion[y][x] == valor)
+        if (casillas[y][x] != -1)
+            throw new IllegalArgumentException("Casilla ya marcada.");
+
+        if (solucion[y][x] == valor) {
             casillas[y][x] = valor;
-        else
+
+            if (esFilaCompleta(y))
+                rellenarFilaConVacios(y);
+
+            if (esColumnaCompleta(x))
+                rellenarColumnaConVacios(x);
+
+        } else
             throw new NoSuchElementException("Valor incorrecto.");
+    }
+
+    /**
+     * Verifica si todas las casillas llenas de la fila están marcadas.
+     *
+     * @param fila Índice de la fila a verificar.
+     * @return true si todas las casillas llenas están marcadas, false en caso
+     *         contrario.
+     */
+    private boolean esFilaCompleta(int fila) {
+        for (int i = 0; i < tamano; i++)
+            if (solucion[fila][i] == 1 && casillas[fila][i] != 1)
+                return false;
+        return true;
+    }
+
+    /**
+     * Verifica si todas las casillas llenas de la columna están marcadas.
+     *
+     * @param columna Índice de la columna a verificar.
+     * @return true si todas las casillas llenas están marcadas, false en caso
+     *         contrario.
+     */
+    private boolean esColumnaCompleta(int columna) {
+        for (int i = 0; i < tamano; i++)
+            if (solucion[i][columna] == 1 && casillas[i][columna] != 1)
+                return false;
+        return true;
+    }
+
+    /**
+     * Rellena con ceros todas las casillas vacías en una fila.
+     *
+     * @param fila Índice de la fila a rellenar.
+     */
+    private void rellenarFilaConVacios(int fila) {
+        for (int i = 0; i < tamano; i++)
+            if (casillas[fila][i] == -1)
+                casillas[fila][i] = 0; // Marcar como vacío
+    }
+
+    /**
+     * Rellena con ceros todas las casillas vacías en una columna.
+     *
+     * @param columna Índice de la columna a rellenar.
+     */
+    private void rellenarColumnaConVacios(int columna) {
+        for (int i = 0; i < tamano; i++)
+            if (casillas[i][columna] == -1)
+                casillas[i][columna] = 0; // Marcar como vacío
     }
 
     /**
@@ -57,16 +112,6 @@ public class Tablero extends LayOutNonograma {
      */
     public boolean completo() {
         return buscarPrimeraOcurrencia(casillas, -1).isEmpty();
-    }
-
-    /**
-     * Devuelve las coordenadas del primer espacio vacío (valor 0) en la solución.
-     * 
-     * @return Un array con las coordenadas [x, y] del primer espacio vacío.
-     *         Si no hay espacios vacíos, devuelve [-1, -1].
-     */
-    public int[] primerVacio() {
-        return buscarPrimeraOcurrencia(solucion, 0).orElse(new int[] { -1, -1 });
     }
 
     /**
@@ -85,6 +130,20 @@ public class Tablero extends LayOutNonograma {
             return new int[] { x, y, valor };
         }
         return new int[] { -1, -1, -1 };
+    }
+
+    /**
+     * Marca la primera casilla vacía en la solución como 0.
+     */
+    public void pistaInicio() {
+        int[] pista = primerVacio();
+        if (pista[0] != -1) {
+            casillas[pista[1]][pista[0]] = 0;
+        }
+    }
+
+    private int[] primerVacio() {
+        return buscarPrimeraOcurrencia(solucion, 0).orElse(new int[] { -1, -1 });
     }
 
     /**
@@ -114,4 +173,5 @@ public class Tablero extends LayOutNonograma {
         if (x < 0 || x >= tamano || y < 0 || y >= tamano)
             throw new IllegalArgumentException("Coordenadas fuera de rango.");
     }
+
 }
