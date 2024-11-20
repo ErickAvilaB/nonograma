@@ -1,0 +1,31 @@
+1. Clase InputScanner
+
+Patrón de diseño utilizado: Singleton
+
+Evidencias:
+
+Esta clase implementa un constructor privado para evitar que se puedan crear instancias directamente.
+Utiliza un método getInstance() para devolver una única instancia de Scanner.
+Asegura que instance sea inicializado solo una vez (lazy initialization) al verificar si es null.
+El patrón Singleton asegura que solo haya una instancia de Scanner en toda la aplicación, lo que es útil para gestionar recursos compartidos como entrada/salida.
+
+2. Clase LayOutNonograma
+
+Patrón de diseño utilizado: Plantilla (Template Method)
+
+Evidencias:
+
+Esta clase define una estructura base para la representación gráfica del Nonograma, mediante métodos como graficar().
+Usa métodos privados (agregarPistasColumnas, agregarFilas, etc.) que definen pasos específicos para generar el diseño. Estos métodos pueden ser sobreescritos o extendidos en subclases para personalizar el comportamiento.
+Sirve como clase base para otras clases, como Nonograma y Tablero.
+El patrón Template Method organiza una secuencia de operaciones en una clase base, permitiendo que las subclases redefinan partes del comportamiento.
+
+3. Clase Nonograma
+
+Patrón de diseño utilizado: Fabrica Simple (Simple Factory)
+
+Evidencias:
+
+Tiene un método constructor que crea un Nonograma con un tamaño específico (build(tamano)).
+La generación del tablero de casillas y pistas es automática y controlada internamente, encapsulando la lógica compleja de creación.
+Aunque no implementa una fábrica explícita, la lógica centralizada para generar un Nonograma la convierte en una variación de este patrón.
