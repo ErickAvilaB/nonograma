@@ -64,28 +64,6 @@ Para ejecutar el proyecto, necesitas tener instalado Java. Para compilar y ejecu
 
 - **Completa casillas automáticamente**: Si el jugador marca todas las casillas de una fila o columna, las casillas restantes se completarán automáticamente.
 
-## Clases Principales
-
-### `InputScanner`
-
-Un singleton para obtener una instancia única de `Scanner`, asegurando que no se creen múltiples instancias a lo largo del juego.
-
-### `LayOutNonograma`
-
-Define la estructura base del Nonograma, incluyendo métodos para graficar el tablero y calcular el ancho de las pistas.
-
-### `Nonograma`
-
-Genera un Nonograma aleatorio con pistas basadas en las casillas generadas, asegurando que siempre tenga una solución válida.
-
-### `Tablero`
-
-Representa el tablero en el cual el jugador interactúa. Permite marcar casillas y verificar si el Nonograma ha sido resuelto correctamente.
-
-### `Main`
-
-Controla la lógica principal del juego, mostrando los mensajes de bienvenida, solicitando el nivel y manejando la interacción del jugador durante la partida.
-
 ## Licencia
 
 Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo LICENSE para más detalles.
