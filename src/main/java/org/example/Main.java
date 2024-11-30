@@ -32,13 +32,12 @@ public class Main {
     }
 
     private void jugar(Tablero tablero, Scanner scanner) {
-        int vidas = 3;
-        int pistas = 3;
+        Jugador jugador = new Jugador();
 
         System.out.println(tablero.graficar());
 
-        while (!tablero.completo() && vidas > 0) {
-            System.out.println("Vidas: " + vidas + " - Pistas: " + pistas + "\n");
+        while (!tablero.completo() && jugador.vivo()) {
+            System.out.println("Vidas: " + jugador.vidas() + " - Pistas: " + jugador.pistas() + "\n");
             System.out.print("Ingresa 'x y valor' para marcar o '-1 -1 -1' para una pista: ");
 
             int[] entrada = obtenerEntrada(scanner);
@@ -52,25 +51,25 @@ public class Main {
 
             // Si el usuario pide una pista
             if (x == -1 && y == -1 && valor == -1) {
-                if (pistas <= 0) {
+                if (!jugador.tienePistas()) {
                     System.out.println("No tienes pistas disponibles");
                     System.out.println(tablero.graficar());
                     continue;
                 }
-                pistas--;
+                jugador.restarPista();
                 mostrarPista(tablero);
                 continue;
             }
 
             // Intentar marcar una casilla en el tablero
             if (marcarCasilla(tablero, x, y, valor) == 0) {
-                vidas--;
+                jugador.restarVida();
             }
 
             System.out.println(tablero.graficar());
         }
 
-        mostrarResultado(vidas);
+        mostrarResultado(jugador.vidas());
     }
 
     private void mostrarPista(Tablero tablero) {
