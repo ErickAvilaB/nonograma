@@ -3,6 +3,7 @@ package org.example;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Nonograma
@@ -10,8 +11,11 @@ import java.util.List;
  */
 public class UI {
 
-    private static final int ANCHO_VENTANA = 250;
+    private static final int ANCHO_VENTANA = 400;
     private static final int ALTO_VENTANA = 300;
+
+    private JLabel labelVidas; // Etiqueta para mostrar las vidas
+    private int vidas = 3;
 
     public static void main(String[] args) {
         UI ui = new UI();
@@ -23,9 +27,8 @@ public class UI {
      */
     private void createAndShowUI() {
         JFrame frame = setupFrame();
-        Tablero tablero = inicializarTablero(5); // Crear tablero de tamaño 5x5
 
-        configurarComponentes(frame, tablero);
+        configurarComponentes(frame);
         frame.setVisible(true);
     }
 
@@ -62,7 +65,14 @@ public class UI {
     private void configurarComponentes(JFrame frame, Tablero tablero) {
         frame.add(crearTitulo(), BorderLayout.NORTH);
         frame.add(crearPanelSeleccion(frame), BorderLayout.CENTER);
+        frame.add(crearPanelVidas(), BorderLayout.WEST);
         frame.add(crearTableroPanel(tablero), BorderLayout.SOUTH);
+    }
+
+    private void configurarComponentes(JFrame frame) {
+        frame.add(crearTitulo(), BorderLayout.NORTH);
+        frame.add(crearPanelSeleccion(frame), BorderLayout.CENTER);
+        frame.add(crearPanelVidas(), BorderLayout.WEST);
     }
 
     /**
@@ -90,6 +100,21 @@ public class UI {
         return panel;
     }
 
+    private JPanel crearPanelVidas() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(2, 1));
+        JLabel tituloVidas = new JLabel("Vidas restantes:");
+        tituloVidas.setHorizontalAlignment(SwingConstants.CENTER);
+
+        labelVidas = new JLabel(String.valueOf(vidas), SwingConstants.CENTER); // Inicializa con las vidas
+        labelVidas.setFont(new Font("Arial", Font.BOLD, 18));
+        labelVidas.setForeground(Color.MAGENTA);
+
+        panel.add(tituloVidas);
+        panel.add(labelVidas);
+        return panel;
+    }
+
     /**
      * Crea un JComboBox con los niveles de dificultad.
      * 
@@ -113,16 +138,46 @@ public class UI {
         return boton;
     }
 
-    /**
-     * Maneja la acción de confirmar la selección.
-     * 
-     * @param frame    Marco principal.
-     * @param comboBox JComboBox con la selección.
-     */
     private void manejarConfirmacion(JFrame frame, JComboBox<String> comboBox) {
         String nivelSeleccionado = (String) comboBox.getSelectedItem();
-        JOptionPane.showMessageDialog(frame, "Has seleccionado: " + nivelSeleccionado);
-        // Aquí puedes integrar la lógica del nivel de dificultad
+        int tamanoTablero;
+
+        // Definir el tamaño o la complejidad según el nivel seleccionado
+        switch (nivelSeleccionado) {
+            case "Principiante":
+                tamanoTablero = 5;
+                break;
+            case "Fácil":
+                tamanoTablero = 5;
+                break;
+            case "Medio":
+                tamanoTablero = 10;
+                break;
+            case "Intermedio":
+                tamanoTablero = 10;
+                break;
+            case "Difícil":
+                tamanoTablero = 15;
+                break;
+            default:
+                tamanoTablero = 5;
+        }
+
+        // Crear un nuevo tablero con el tamaño seleccionado
+        Tablero nuevoTablero = inicializarTablero(tamanoTablero);
+
+        if (nivelSeleccionado == "Principiante" || nivelSeleccionado == "Intermedio") {
+            nuevoTablero.pistaInicio();
+            System.out.println(nuevoTablero.graficar());
+        }
+
+        // Refrescar la interfaz gráfica con el nuevo tablero
+        vidas = 3;
+        frame.getContentPane().removeAll();
+        configurarComponentes(frame, nuevoTablero);
+        frame.revalidate();
+        frame.repaint();
+
     }
 
     /**
@@ -196,6 +251,8 @@ public class UI {
                 panel.add(botones[i][j]);
             }
         }
+
+        actualizarTablero(botones, tablero);
         return panel;
     }
 
@@ -234,18 +291,35 @@ public class UI {
      */
     private void manejarClicCasilla(java.awt.event.MouseEvent e, int x, int y, Tablero tablero, JButton[][] botones) {
         try {
+            if (vidas <= 0) {
+                JOptionPane.showMessageDialog(null, "No tienes vidas", "Vidas", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
             if (e.getButton() == java.awt.event.MouseEvent.BUTTON1) {
                 tablero.marcarCasilla(x, y, 1);
             } else if (e.getButton() == java.awt.event.MouseEvent.BUTTON3) {
                 tablero.marcarCasilla(x, y, 0);
             }
-            actualizarTablero(botones, tablero);
-
             if (tablero.completo()) {
                 JOptionPane.showMessageDialog(null, "¡Ganaste!", "Victoria", JOptionPane.INFORMATION_MESSAGE);
             }
+        } catch (NoSuchElementException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            restarVida();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            actualizarTablero(botones, tablero);
+        }
+    }
+
+    private void restarVida() {
+        vidas--;
+        labelVidas.setText(String.valueOf(vidas));
+
+        if (vidas <= 0) {
+            JOptionPane.showMessageDialog(null, "¡Has perdido! No te quedan vidas.", "Game Over",
+                    JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
