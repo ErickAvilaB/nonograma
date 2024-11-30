@@ -3,10 +3,13 @@ package org.example;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class Main {
+/**
+ * Juego de Nonograma en la terminal.
+ */
+public class Terminal {
 
     public static void main(String[] args) {
-        new Main().iniciarJuego();
+        new Terminal().iniciarJuego();
     }
 
     private void iniciarJuego() {
