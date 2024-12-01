@@ -11,11 +11,14 @@ import java.util.NoSuchElementException;
  */
 public class UI {
 
-    private static final int ANCHO_VENTANA = 400;
-    private static final int ALTO_VENTANA = 300;
+    private static final int ANCHO_VENTANA = 600;
+    private static final int ALTO_VENTANA = 600;
 
-    private JLabel labelVidas; // Etiqueta para mostrar las vidas
+    private JLabel labelVidas;
+    private JLabel labelPistas;
     private int vidas = 3;
+    private int pistas = 3;
+    private JButton[][] botones;
 
     public static void main(String[] args) {
         UI ui = new UI();
@@ -46,17 +49,6 @@ public class UI {
     }
 
     /**
-     * Inicializa el tablero lógico del Nonograma.
-     * 
-     * @param tamano Tamaño del tablero.
-     * @return Tablero inicializado.
-     */
-    private Tablero inicializarTablero(int tamano) {
-        Nonograma nonograma = new Nonograma(tamano);
-        return new Tablero(nonograma);
-    }
-
-    /**
      * Configura los componentes principales en el marco.
      * 
      * @param frame   Marco principal.
@@ -66,13 +58,14 @@ public class UI {
         frame.add(crearTitulo(), BorderLayout.NORTH);
         frame.add(crearPanelSeleccion(frame), BorderLayout.CENTER);
         frame.add(crearPanelVidas(), BorderLayout.WEST);
+        frame.add(crearPanelPistas(), BorderLayout.EAST);
+        frame.add(crearPanelBotones(tablero), BorderLayout.EAST);
         frame.add(crearTableroPanel(tablero), BorderLayout.SOUTH);
     }
 
     private void configurarComponentes(JFrame frame) {
         frame.add(crearTitulo(), BorderLayout.NORTH);
         frame.add(crearPanelSeleccion(frame), BorderLayout.CENTER);
-        frame.add(crearPanelVidas(), BorderLayout.WEST);
     }
 
     /**
@@ -97,21 +90,6 @@ public class UI {
 
         panel.add(comboBox);
         panel.add(botonConfirmar);
-        return panel;
-    }
-
-    private JPanel crearPanelVidas() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(2, 1));
-        JLabel tituloVidas = new JLabel("Vidas restantes:");
-        tituloVidas.setHorizontalAlignment(SwingConstants.CENTER);
-
-        labelVidas = new JLabel(String.valueOf(vidas), SwingConstants.CENTER); // Inicializa con las vidas
-        labelVidas.setFont(new Font("Arial", Font.BOLD, 18));
-        labelVidas.setForeground(Color.MAGENTA);
-
-        panel.add(tituloVidas);
-        panel.add(labelVidas);
         return panel;
     }
 
@@ -180,6 +158,47 @@ public class UI {
 
     }
 
+    private JPanel crearPanelVidas() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(2, 1));
+        JLabel tituloVidas = new JLabel("Vidas restantes:");
+        tituloVidas.setHorizontalAlignment(SwingConstants.CENTER);
+
+        labelVidas = new JLabel(String.valueOf(vidas), SwingConstants.CENTER); // Inicializa con las vidas
+        labelVidas.setFont(new Font("Arial", Font.BOLD, 18));
+        labelVidas.setForeground(Color.MAGENTA);
+
+        panel.add(tituloVidas);
+        panel.add(labelVidas);
+        return panel;
+    }
+
+    private JPanel crearPanelPistas() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(2, 1));
+        JLabel tituloPistas = new JLabel("Pistas restantes:");
+        tituloPistas.setHorizontalAlignment(SwingConstants.CENTER);
+
+        labelPistas = new JLabel(String.valueOf(pistas), SwingConstants.CENTER); // Inicializa con las pistas
+        labelPistas.setFont(new Font("Arial", Font.BOLD, 18));
+        labelPistas.setForeground(Color.MAGENTA);
+
+        panel.add(tituloPistas);
+        panel.add(labelPistas);
+        return panel;
+    }
+
+    /**
+     * Inicializa el tablero lógico del Nonograma.
+     * 
+     * @param tamano Tamaño del tablero.
+     * @return Tablero inicializado.
+     */
+    private Tablero inicializarTablero(int tamano) {
+        Nonograma nonograma = new Nonograma(tamano);
+        return new Tablero(nonograma);
+    }
+
     /**
      * Crea un panel que representa el tablero gráfico.
      * 
@@ -194,6 +213,42 @@ public class UI {
         tableroPanel.add(crearCasillas(tablero), BorderLayout.CENTER);
 
         return tableroPanel;
+    }
+
+    private JPanel crearPanelBotones(Tablero tablero) {
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        JButton botonPista = new JButton("Pista");
+
+        botonPista.addActionListener(e -> {
+            manejarPista(tablero);
+        });
+
+        panel.add(botonPista);
+        return panel;
+    }
+
+    private void manejarPista(Tablero tablero) {
+        if (vidas <= 0) {
+            JOptionPane.showMessageDialog(null, "No puedes usar pistas sin vidas.", "Sin vidas",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (pistas <= 0) {
+            JOptionPane.showMessageDialog(null, "No puedes usar más pistas.", "Sin pistas",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        pistas--;
+
+        int[] pista = tablero.pista(); // Obtener la pista del tablero
+        if (pista[0] == -1 && pista[1] == -1) {
+            JOptionPane.showMessageDialog(null, "No hay más pistas disponibles.", "Sin pistas",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            actualizarTablero(tablero);
+            JOptionPane.showMessageDialog(null, "Pista utilizada: (" + pista[0] + ", " + pista[1] + ")", "Pista",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     /**
@@ -243,7 +298,7 @@ public class UI {
     private JPanel crearCasillas(Tablero tablero) {
         int tamano = tablero.getTamano();
         JPanel panel = new JPanel(new GridLayout(tamano, tamano));
-        JButton[][] botones = new JButton[tamano][tamano];
+        botones = new JButton[tamano][tamano];
 
         for (int i = 0; i < tamano; i++) {
             for (int j = 0; j < tamano; j++) {
@@ -252,7 +307,7 @@ public class UI {
             }
         }
 
-        actualizarTablero(botones, tablero);
+        actualizarTablero(tablero);
         return panel;
     }
 
@@ -309,7 +364,7 @@ public class UI {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         } finally {
-            actualizarTablero(botones, tablero);
+            actualizarTablero(tablero);
         }
     }
 
@@ -339,7 +394,7 @@ public class UI {
      * @param botones Matriz de botones.
      * @param tablero Tablero lógico.
      */
-    private void actualizarTablero(JButton[][] botones, Tablero tablero) {
+    private void actualizarTablero(Tablero tablero) {
         int tamano = tablero.getTamano();
         int[][] casillas = tablero.getCasillas();
 
