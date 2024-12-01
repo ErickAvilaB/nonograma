@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
  */
 public class UI {
 
-    private static final int ANCHO_VENTANA = 600;
+    private static final int ANCHO_VENTANA = 700;
     private static final int ALTO_VENTANA = 600;
 
     private JLabel labelVidas;
@@ -48,19 +48,29 @@ public class UI {
         return frame;
     }
 
-    /**
-     * Configura los componentes principales en el marco.
-     * 
-     * @param frame   Marco principal.
-     * @param tablero Tablero lógico.
-     */
     private void configurarComponentes(JFrame frame, Tablero tablero) {
+        // Barra superior con título y selección de nivel
         frame.add(crearTitulo(), BorderLayout.NORTH);
-        frame.add(crearPanelSeleccion(frame), BorderLayout.CENTER);
-        frame.add(crearPanelVidas(), BorderLayout.WEST);
-        frame.add(crearPanelPistas(), BorderLayout.EAST);
-        frame.add(crearPanelBotones(tablero), BorderLayout.EAST);
-        frame.add(crearTableroPanel(tablero), BorderLayout.SOUTH);
+        frame.add(crearPanelSeleccion(frame), BorderLayout.NORTH);
+
+        // Panel central donde estará el tablero y botones
+        JPanel centralPanel = new JPanel();
+        centralPanel.setLayout(new BorderLayout());
+
+        // Panel para el tablero (Centro de la pantalla)
+        centralPanel.add(crearTableroPanel(tablero), BorderLayout.CENTER);
+
+        // Panel lateral de botones (Este)
+        JPanel botonesPanel = new JPanel();
+        botonesPanel.setLayout(new BoxLayout(botonesPanel, BoxLayout.Y_AXIS));
+        botonesPanel.add(crearPanelVidas());
+        botonesPanel.add(crearPanelPistas());
+        botonesPanel.add(crearPanelBotones(tablero));
+
+        centralPanel.add(botonesPanel, BorderLayout.EAST);
+
+        // Configura los componentes y coloca los paneles
+        frame.add(centralPanel, BorderLayout.CENTER);
     }
 
     private void configurarComponentes(JFrame frame) {
@@ -117,6 +127,8 @@ public class UI {
     }
 
     private void manejarConfirmacion(JFrame frame, JComboBox<String> comboBox) {
+        vidas = 3;
+        pistas = 3;
         String nivelSeleccionado = (String) comboBox.getSelectedItem();
         int tamanoTablero;
 
@@ -146,13 +158,17 @@ public class UI {
 
         if (nivelSeleccionado == "Principiante" || nivelSeleccionado == "Intermedio") {
             nuevoTablero.pistaInicio();
-            System.out.println(nuevoTablero.graficar());
         }
 
-        // Refrescar la interfaz gráfica con el nuevo tablero
-        vidas = 3;
+        // Aquí, en lugar de eliminar todo, solo actualizamos la interfaz para mostrar
+        // el juego
+        // Quitamos el panel de selección de nivel
         frame.getContentPane().removeAll();
-        configurarComponentes(frame, nuevoTablero);
+
+        // Añadimos el panel del juego
+        configurarComponentes(frame, nuevoTablero); // Asegúrate de pasar el tablero para configurar los componentes
+
+        // Añadimos los elementos gráficos de la interfaz
         frame.revalidate();
         frame.repaint();
 
@@ -160,11 +176,11 @@ public class UI {
 
     private JPanel crearPanelVidas() {
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(2, 1));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Cambiado para mayor control de tamaño
         JLabel tituloVidas = new JLabel("Vidas restantes:");
         tituloVidas.setHorizontalAlignment(SwingConstants.CENTER);
 
-        labelVidas = new JLabel(String.valueOf(vidas), SwingConstants.CENTER); // Inicializa con las vidas
+        labelVidas = new JLabel(String.valueOf(vidas), SwingConstants.CENTER);
         labelVidas.setFont(new Font("Arial", Font.BOLD, 18));
         labelVidas.setForeground(Color.MAGENTA);
 
@@ -175,11 +191,11 @@ public class UI {
 
     private JPanel crearPanelPistas() {
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(2, 1));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Cambiado para mayor control de tamaño
         JLabel tituloPistas = new JLabel("Pistas restantes:");
         tituloPistas.setHorizontalAlignment(SwingConstants.CENTER);
 
-        labelPistas = new JLabel(String.valueOf(pistas), SwingConstants.CENTER); // Inicializa con las pistas
+        labelPistas = new JLabel(String.valueOf(pistas), SwingConstants.CENTER);
         labelPistas.setFont(new Font("Arial", Font.BOLD, 18));
         labelPistas.setForeground(Color.MAGENTA);
 
@@ -199,35 +215,36 @@ public class UI {
         return new Tablero(nonograma);
     }
 
-    /**
-     * Crea un panel que representa el tablero gráfico.
-     * 
-     * @param tablero Tablero lógico.
-     * @return JPanel configurado.
-     */
     private JPanel crearTableroPanel(Tablero tablero) {
-        JPanel tableroPanel = new JPanel(new BorderLayout());
+        JPanel tableroPanel = new JPanel();
+        tableroPanel.setLayout(new BorderLayout());
 
+        // Pistas verticales a la izquierda
         tableroPanel.add(crearPistasFilas(tablero), BorderLayout.WEST);
+
+        // Pistas horizontales en la parte superior
         tableroPanel.add(crearPistasColumnas(tablero), BorderLayout.NORTH);
+
+        // Casillas del tablero en el centro
         tableroPanel.add(crearCasillas(tablero), BorderLayout.CENTER);
 
         return tableroPanel;
     }
 
     private JPanel crearPanelBotones(Tablero tablero) {
-        JPanel panel = new JPanel(new GridLayout(2, 1));
-        JButton botonPista = new JButton("Pista");
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(1, 1)); // Acomoda el panel de botones en una fila
 
-        botonPista.addActionListener(e -> {
-            manejarPista(tablero);
-        });
+        // Botón de usar pista
+        JButton botonPista = new JButton("Pista");
+        botonPista.addActionListener(e -> manejarPista(tablero, (JFrame) SwingUtilities.getWindowAncestor(panel)));
 
         panel.add(botonPista);
+        actualizarTablero(tablero); // Actualiza el tablero al inicio
         return panel;
     }
 
-    private void manejarPista(Tablero tablero) {
+    private void manejarPista(Tablero tablero, JFrame frame) {
         if (vidas <= 0) {
             JOptionPane.showMessageDialog(null, "No puedes usar pistas sin vidas.", "Sin vidas",
                     JOptionPane.WARNING_MESSAGE);
@@ -238,28 +255,32 @@ public class UI {
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
+
+        // Restar una pista
         pistas--;
+
+        // Actualizar el texto del JLabel de pistas
+        labelPistas.setText(String.valueOf(pistas));
+
+        // Asegúrate de que la interfaz se actualice
+        frame.revalidate(); // Refresca los componentes del contenedor
+        frame.repaint(); // Redibuja el contenedor con los nuevos datos
 
         int[] pista = tablero.pista(); // Obtener la pista del tablero
         if (pista[0] == -1 && pista[1] == -1) {
             JOptionPane.showMessageDialog(null, "No hay más pistas disponibles.", "Sin pistas",
                     JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            actualizarTablero(tablero);
-            JOptionPane.showMessageDialog(null, "Pista utilizada: (" + pista[0] + ", " + pista[1] + ")", "Pista",
-                    JOptionPane.INFORMATION_MESSAGE);
+        }
+        actualizarTablero(tablero);
+        if (tablero.completo()) {
+            JOptionPane.showMessageDialog(null, "¡Ganaste!", "Victoria", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
-    /**
-     * Crea un panel con las pistas de las filas.
-     * 
-     * @param tablero Tablero lógico.
-     * @return JPanel configurado.
-     */
     private JPanel crearPistasFilas(Tablero tablero) {
         int tamano = tablero.getTamano();
         JPanel panel = new JPanel(new GridLayout(tamano, 1));
+        panel.setPreferredSize(new Dimension(60, tamano * 30)); // Asegura un buen tamaño para las pistas
 
         for (List<Integer> pistaFila : tablero.getPistasFilas()) {
             JLabel label = new JLabel(formatearPistas(pistaFila), SwingConstants.RIGHT);
@@ -268,15 +289,10 @@ public class UI {
         return panel;
     }
 
-    /**
-     * Crea un panel con las pistas de las columnas.
-     * 
-     * @param tablero Tablero lógico.
-     * @return JPanel configurado.
-     */
     private JPanel crearPistasColumnas(Tablero tablero) {
         int tamano = tablero.getTamano();
         JPanel panel = new JPanel(new GridLayout(1, tamano));
+        panel.add(new JPanel()); // Espacio en blanco para la esquina superior izquierda
 
         for (List<Integer> pistaColumna : tablero.getPistasColumnas()) {
             JPanel subPanel = new JPanel(new GridLayout(pistaColumna.size(), 1));
@@ -289,15 +305,11 @@ public class UI {
         return panel;
     }
 
-    /**
-     * Crea un panel con las casillas interactivas del tablero.
-     * 
-     * @param tablero Tablero lógico.
-     * @return JPanel configurado.
-     */
     private JPanel crearCasillas(Tablero tablero) {
         int tamano = tablero.getTamano();
         JPanel panel = new JPanel(new GridLayout(tamano, tamano));
+        panel.setPreferredSize(new Dimension(400, 400)); // Tamaño fijo para las casillas
+
         botones = new JButton[tamano][tamano];
 
         for (int i = 0; i < tamano; i++) {
@@ -307,7 +319,6 @@ public class UI {
             }
         }
 
-        actualizarTablero(tablero);
         return panel;
     }
 
@@ -357,6 +368,7 @@ public class UI {
             }
             if (tablero.completo()) {
                 JOptionPane.showMessageDialog(null, "¡Ganaste!", "Victoria", JOptionPane.INFORMATION_MESSAGE);
+
             }
         } catch (NoSuchElementException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
